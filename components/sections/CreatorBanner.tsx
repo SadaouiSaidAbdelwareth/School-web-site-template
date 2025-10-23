@@ -1,10 +1,11 @@
-
 import React, { useState, useEffect } from 'react';
 import { useTranslations } from '../../hooks/useTranslations';
+import { useData } from '../../context/DataContext';
 
 export default function CreatorBanner() {
   const [isVisible, setIsVisible] = useState(false);
   const t = useTranslations();
+  const { schoolData } = useData();
 
   useEffect(() => {
     // Using a short timeout to make the animation more noticeable after page load
@@ -31,11 +32,11 @@ export default function CreatorBanner() {
       <div className="absolute top-0 left-0 w-full h-full bg-grid-pattern opacity-10 dark:opacity-5" aria-hidden="true"></div>
       <div className="relative z-10 container mx-auto flex items-center justify-center sm:justify-between space-x-4 rtl:space-x-reverse">
         <div className="flex items-center space-x-4 rtl:space-x-reverse">
-          <img src="https://i.pravatar.cc/150?u=a-passionate-developer" alt={t('creatorName')} className="w-12 h-12 rounded-full border-2 border-primary/50 shadow-lg hidden sm:block object-cover"/>
+          <img src={schoolData.creatorPhotoUrl} alt={t('creatorName')} className="w-12 h-12 rounded-full border-2 border-primary/50 shadow-lg hidden sm:block object-cover"/>
           <div>
             <p className="text-sm text-secondary-600 dark:text-secondary-300">
               {t('createdBy')}{' '}
-              <span className="font-bold text-secondary-800 dark:text-white">{t('SADAOUI SAID')}</span>
+              <span className="font-bold text-secondary-800 dark:text-white">{t('creatorName')}</span>
             </p>
             <p className="text-xs text-secondary-500 dark:text-secondary-400">{t('creatorBio')}</p>
           </div>

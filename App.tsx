@@ -6,6 +6,7 @@ import CreatorBanner from './components/sections/CreatorBanner';
 
 import Hero from './components/sections/Hero';
 import About from './components/sections/About';
+import SchoolLife from './components/sections/SchoolLife';
 import Programs from './components/sections/Programs';
 import Testimonials from './components/sections/Testimonials';
 import FAQ from './components/sections/FAQ';
@@ -38,6 +39,7 @@ export default function App() {
           <main>
             <Hero openRegistration={() => setRegistrationVisible(true)}/>
             <About />
+            <SchoolLife />
             <Programs />
             <Testimonials />
             <FAQ />

@@ -7,12 +7,47 @@ interface DashboardProps {
   closeDashboard: () => void;
 }
 
+// A reusable component for file inputs to keep the main component cleaner
+const ImageUploadField: React.FC<{
+  label: string;
+  previewUrl: string;
+  alt: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  previewClass?: string;
+}> = ({ label, previewUrl, alt, onChange, previewClass = "w-12 h-12" }) => (
+    <div>
+        <label className="block text-sm font-medium mb-1">{label}</label>
+        <div className="flex items-center gap-4">
+            {previewUrl && previewUrl.startsWith('data:image') ? (
+                 <img 
+                    src={previewUrl} 
+                    alt={alt}
+                    className={`${previewClass} flex-shrink-0 bg-white dark:bg-secondary-700 rounded-md object-cover border border-secondary-200 dark:border-secondary-600`} 
+                />
+            ) : (
+                <div className={`${previewClass} flex-shrink-0 bg-white dark:bg-secondary-700 rounded-md flex items-center justify-center border border-secondary-200 dark:border-secondary-600`}>
+                    <Logo url={previewUrl} className="h-10 w-10 text-primary p-1" />
+                </div>
+            )}
+           
+            <input 
+                type="file" 
+                accept="image/*"
+                onChange={onChange}
+                className="block w-full text-sm text-secondary-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-50 dark:file:bg-primary-900/50 file:text-primary dark:file:text-primary-300 hover:file:bg-primary-100 dark:hover:file:bg-primary-900"
+            />
+        </div>
+    </div>
+);
+
+
 export default function Dashboard({ closeDashboard }: DashboardProps) {
   const { schoolData, setSchoolData } = useData();
   const [formData, setFormData] = useState<SchoolData>(schoolData);
 
   useEffect(() => {
-    setFormData(schoolData);
+    // Deep copy to prevent mutations, and merge with defaults to ensure all fields are present
+    setFormData(prev => JSON.parse(JSON.stringify({ ...schoolData, ...prev })));
   }, [schoolData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -23,6 +58,7 @@ export default function Dashboard({ closeDashboard }: DashboardProps) {
       const newData = JSON.parse(JSON.stringify(prev)); // Deep copy
       let current = newData;
       for (let i = 0; i < keys.length - 1; i++) {
+        if (!current[keys[i]]) current[keys[i]] = {};
         current = current[keys[i]];
       }
       current[keys[keys.length - 1]] = value;
@@ -30,6 +66,29 @@ export default function Dashboard({ closeDashboard }: DashboardProps) {
     });
   };
   
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, fieldName: string) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        const keys = fieldName.split('.');
+        
+        setFormData(prev => {
+          const newData = JSON.parse(JSON.stringify(prev));
+          let current = newData;
+          for (let i = 0; i < keys.length - 1; i++) {
+            if (!current[keys[i]]) current[keys[i]] = {};
+            current = current[keys[i]];
+          }
+          current[keys[keys.length - 1]] = result;
+          return newData;
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleTestimonialChange = (index: number, e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => {
@@ -38,23 +97,14 @@ export default function Dashboard({ closeDashboard }: DashboardProps) {
         return { ...prev, testimonials: newTestimonials };
     });
   };
-  
-  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData(prev => ({ ...prev, logoUrl: reader.result as string }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   const handleSave = () => {
     setSchoolData(formData);
     alert('Content saved!');
     closeDashboard();
   };
+  
+  if (!formData) return <div>Loading...</div>;
 
   return (
     <div className="fixed inset-0 bg-white dark:bg-secondary-900 z-50 overflow-y-auto">
@@ -80,19 +130,25 @@ export default function Dashboard({ closeDashboard }: DashboardProps) {
                 </div>
             </div>
             <div className="mt-4">
-                <label className="block text-sm font-medium mb-1">School Logo</label>
-                <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 flex-shrink-0 bg-white dark:bg-secondary-700 rounded-md flex items-center justify-center border border-secondary-200 dark:border-secondary-600">
-                        <Logo url={formData.logoUrl} className="h-10 w-10 text-primary" />
-                    </div>
-                    <input 
-                        type="file" 
-                        accept="image/*"
-                        onChange={handleLogoChange}
-                        className="block w-full text-sm text-secondary-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-50 dark:file:bg-primary-900/50 file:text-primary dark:file:text-primary-300 hover:file:bg-primary-100 dark:hover:file:bg-primary-900"
-                    />
-                </div>
+                 <ImageUploadField 
+                    label="School Logo"
+                    previewUrl={formData.logoUrl}
+                    alt="School Logo Preview"
+                    onChange={(e) => handleImageChange(e, 'logoUrl')}
+                />
             </div>
+          </fieldset>
+
+           {/* Creator Banner */}
+          <fieldset className="border p-4 rounded-md border-secondary-300 dark:border-secondary-600">
+            <legend className="px-2 font-semibold">Creator Banner</legend>
+             <ImageUploadField 
+                label="Creator Photo"
+                previewUrl={formData.creatorPhotoUrl}
+                alt="Creator Photo Preview"
+                onChange={(e) => handleImageChange(e, 'creatorPhotoUrl')}
+                previewClass="w-12 h-12 rounded-full"
+            />
           </fieldset>
           
           {/* About Section */}
@@ -101,6 +157,28 @@ export default function Dashboard({ closeDashboard }: DashboardProps) {
             <div>
               <label className="block text-sm font-medium">About Text</label>
               <textarea name="about.text" value={formData.about.text} onChange={handleChange} rows={4} className="mt-1 block w-full input-style" />
+            </div>
+          </fieldset>
+
+          {/* School Life Section */}
+          <fieldset className="border p-4 rounded-md border-secondary-300 dark:border-secondary-600">
+            <legend className="px-2 font-semibold">School Life Section</legend>
+            <div>
+              <label className="block text-sm font-medium">Title</label>
+              <input type="text" name="schoolLife.title" value={formData.schoolLife?.title || ''} onChange={handleChange} className="mt-1 block w-full input-style" />
+            </div>
+            <div className="mt-4">
+               <ImageUploadField 
+                    label="Image"
+                    previewUrl={formData.schoolLife?.imageUrl || ''}
+                    alt="School Life Image Preview"
+                    onChange={(e) => handleImageChange(e, 'schoolLife.imageUrl')}
+                    previewClass="w-24 h-16"
+                />
+            </div>
+            <div className="mt-4">
+              <label className="block text-sm font-medium">Text</label>
+              <textarea name="schoolLife.text" value={formData.schoolLife?.text || ''} onChange={handleChange} rows={4} className="mt-1 block w-full input-style" />
             </div>
           </fieldset>
 

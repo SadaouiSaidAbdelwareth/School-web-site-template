@@ -45,7 +45,7 @@ export default function Header({ openRegistration }: HeaderProps) {
     <header className="bg-white/80 dark:bg-secondary-900/80 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
       <nav className="container mx-auto px-6 py-3 flex justify-between items-center">
         <a href="#home" className="flex items-center space-x-2 rtl:space-x-reverse">
-          <Logo url={schoolData.logoUrl} className="h-10 w-10 text-primary" />
+          <Logo url={schoolData.logoUrl} className="h-20 w-20 text-primary" />
           <span className="text-xl font-bold text-secondary-800 dark:text-white">{schoolData.schoolName}</span>
         </a>
 

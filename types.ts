@@ -2,10 +2,16 @@ export interface SchoolData {
   schoolName: string;
   slogan: string;
   logoUrl: string;
+  creatorPhotoUrl: string;
   heroImageUrl: string;
   about: {
     title: string;
     text: string;
+  };
+  schoolLife: {
+    title: string;
+    text: string;
+    imageUrl: string;
   };
   programs: {
     primary: ProgramDetail;

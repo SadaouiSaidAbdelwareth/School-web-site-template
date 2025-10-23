@@ -2,13 +2,19 @@ import React, { createContext, useState, useEffect, useContext, ReactNode } from
 import type { SchoolData } from '../types';
 
 const defaultSchoolData: SchoolData = {
-  schoolName: "École Al-Hikma",
-  slogan: "L'excellence en éducation, un avenir brillant pour vos enfants.",
+  schoolName: "Groupe Scolaire Privé ERRIADA EL-ILMIA",
+  slogan: "Le leadership par la science, l'excellence pour l'avenir.",
   logoUrl: "", // Will use SVG component if empty
+  creatorPhotoUrl: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=300&auto=format&fit=crop",
   heroImageUrl: "", // Will use SVG component if empty
   about: {
     title: "À Propos de Notre École",
     text: "Fondée sur des principes de rigueur académique et de développement personnel, notre école offre un environnement d'apprentissage stimulant et bienveillant. Nous nous engageons à préparer chaque élève à devenir un citoyen du monde, confiant et compétent."
+  },
+  schoolLife: {
+    title: "Une Vie Scolaire Épanouissante",
+    text: "Nous croyons qu'un environnement d'apprentissage positif et engageant est la clé du succès. Nos élèves participent à diverses activités qui favorisent le travail d'équipe, la créativité et le leadership. Des clubs de sciences aux équipes sportives, il y a une place pour chaque passion à ERRIADA EL-ILMIA.",
+    imageUrl: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=800&auto=format&fit=crop"
   },
   programs: {
     primary: {
@@ -51,16 +57,16 @@ const defaultSchoolData: SchoolData = {
     }
   ],
   contact: {
-    address: "123 Rue de l'Éducation, Alger, Algérie",
-    phone: "+213 12 345 6789",
-    email: "contact@ecole-alhikma.dz",
+    address: "9 Rue DJEMILA, Hydra, Algérie",
+    phone: "+213 553 98 04 78",
+    email: "contact@erriada-elilmia.dz",
     socials: {
         facebook: "https://facebook.com",
         twitter: "https://twitter.com",
         instagram: "https://instagram.com",
         linkedin: "https://linkedin.com",
     },
-    mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d204525.6291932371!2d2.910397576081494!3d36.75988293345715!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x128fb2f354a36233%3A0x1c37b3b858a74e1d!2sAlgiers%2C%20Algeria!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1sen!2sus"
+    mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3196.56518193214!2d3.041249315288768!3d36.7565319799577!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x128fafb8b4a0c2c3%3A0x6e2b2c45b736a6e0!2sGroupe%20Scolaire%20Priv%C3%A9%20ERRIADA%20EL-ILMIA!5e0!3m2!1sfr!2sdz!4v1718903323034!5m2!1sfr!2sdz"
   },
   faqs: [
     {
@@ -96,7 +102,9 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const storedData = localStorage.getItem('schoolData');
       if (storedData) {
-        setSchoolData(JSON.parse(storedData));
+        const parsedData = JSON.parse(storedData);
+        // Merge with default data to ensure new properties are present
+        setSchoolData({ ...defaultSchoolData, ...parsedData });
       }
     } catch (error) {
       console.error("Failed to parse school data from localStorage", error);

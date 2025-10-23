@@ -37,6 +37,7 @@ export default function Footer({ openDashboard }: FooterProps) {
             <h3 className="font-bold text-secondary-800 dark:text-white mb-4">{t('quickLinks')}</h3>
             <ul className="space-y-2">
               <li><a href="#about" className="hover:text-primary dark:hover:text-primary transition-colors">{t('about')}</a></li>
+              <li><a href="#school-life" className="hover:text-primary dark:hover:text-primary transition-colors">{t('schoolLife')}</a></li>
               <li><a href="#programs" className="hover:text-primary dark:hover:text-primary transition-colors">{t('programs')}</a></li>
               <li><a href="#testimonials" className="hover:text-primary dark:hover:text-primary transition-colors">{t('testimonials')}</a></li>
               <li><a href="#faq" className="hover:text-primary dark:hover:text-primary transition-colors">{t('faq')}</a></li>
