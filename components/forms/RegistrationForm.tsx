@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { useTranslations } from '../../hooks/useTranslations';
 import { useData } from '../../context/DataContext';
@@ -6,6 +7,7 @@ import { Logo } from '../ui/Logo';
 
 interface RegistrationFormProps {
     closeForm: () => void;
+    hideHeader?: boolean;
 }
 
 const AlgerianFlag = () => (
@@ -17,7 +19,7 @@ const AlgerianFlag = () => (
         <circle r="90" fill="#fff"/>
         <path transform="scale(75)" d="M0-1v-.3l.5.9v.3"/>
         <path id="c" d="M20 0l-20 60 20 60z" transform="rotate(18)"/>
-        <use xlinkHref="#c" transform="scale(-1 1)"/>
+        <use href="#c" transform="scale(-1 1)"/>
       </g>
     </svg>
 );
@@ -76,7 +78,7 @@ const SelectField: React.FC<{ id: string, name: string, label: string, value: st
 );
 
 
-export default function RegistrationForm({ closeForm }: RegistrationFormProps) {
+export default function RegistrationForm({ closeForm, hideHeader = false }: RegistrationFormProps) {
     const [step, setStep] = useState(1);
     const t = useTranslations();
     const { schoolData } = useData();
@@ -113,18 +115,20 @@ export default function RegistrationForm({ closeForm }: RegistrationFormProps) {
     const prevStep = () => setStep(s => Math.max(s - 1, 1));
     
     return (
-        <div className="min-h-screen bg-[#FBF9F4] dark:bg-secondary-950 font-sans text-secondary-700 dark:text-secondary-300">
-            <header className="py-6 px-4 sm:px-6 lg:px-8">
-                <div className="container mx-auto flex justify-between items-center">
-                    <button onClick={closeForm} className="flex items-center space-x-2 rtl:space-x-reverse group">
-                        <Logo url={schoolData.logoUrl} className="h-10 w-10 text-primary" />
-                        <span className="text-xl font-bold text-secondary-800 dark:text-white group-hover:text-primary transition-colors">{schoolData.schoolName}</span>
-                    </button>
-                    <button onClick={handleReset} className="text-secondary-500 hover:text-primary transition-colors p-2" aria-label="Reset form">
-                         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h5M20 20v-5h-5M4 4a14.94 14.94 0 0113.42 6.11M20 20a14.94 14.94 0 01-13.42-6.11" /></svg>
-                    </button>
-                </div>
-            </header>
+        <div className="bg-[#FBF9F4] dark:bg-secondary-950 font-sans text-secondary-700 dark:text-secondary-300">
+            {!hideHeader && (
+              <header className="py-6 px-4 sm:px-6 lg:px-8">
+                  <div className="container mx-auto flex justify-between items-center">
+                      <button onClick={closeForm} className="flex items-center space-x-2 rtl:space-x-reverse group">
+                          <Logo url={schoolData.logoUrl} className="h-10 w-10 text-primary" />
+                          <span className="text-xl font-bold text-secondary-800 dark:text-white group-hover:text-primary transition-colors">{schoolData.schoolName}</span>
+                      </button>
+                      <button onClick={handleReset} className="text-secondary-500 hover:text-primary transition-colors p-2" aria-label="Reset form">
+                          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h5M20 20v-5h-5M4 4a14.94 14.94 0 0113.42 6.11M20 20a14.94 14.94 0 01-13.42-6.11" /></svg>
+                      </button>
+                  </div>
+              </header>
+            )}
 
             <main className="py-8 sm:py-12">
                 <div className="container mx-auto max-w-4xl px-4">

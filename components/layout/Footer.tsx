@@ -1,6 +1,7 @@
 import React from 'react';
 import { useData } from '../../context/DataContext';
 import { useTranslations } from '../../hooks/useTranslations';
+import { useSmoothScroll } from '../../hooks/useSmoothScroll';
 import { Logo } from '../ui/Logo';
 import { FacebookIcon, TwitterIcon, InstagramIcon, LinkedInIcon } from '../icons/Icons';
 
@@ -11,17 +12,18 @@ interface FooterProps {
 export default function Footer({ openDashboard }: FooterProps) {
   const { schoolData } = useData();
   const t = useTranslations();
+  const scrollTo = useSmoothScroll();
   
   return (
     <footer className="bg-secondary-100 dark:bg-secondary-800 relative z-10">
       <div className="container mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          <div className="flex flex-col items-start col-span-1 md:col-span-2 lg:col-span-1">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="flex flex-col items-start">
             <div className="flex items-center space-x-2 rtl:space-x-reverse mb-4">
                 <Logo url={schoolData.logoUrl} className="h-10 w-10 text-primary" />
                 <span className="text-xl font-bold text-secondary-800 dark:text-white">{schoolData.schoolName}</span>
             </div>
-            <p className="text-secondary-600 dark:text-secondary-400">{t('slogan')}</p>
+            <p className="text-secondary-600 dark:text-secondary-400">{schoolData.slogan}</p>
              <div className="mt-6">
                 <h3 className="font-bold text-secondary-800 dark:text-white mb-3">{t('followUs')}</h3>
                 <div className="flex space-x-4">
@@ -35,30 +37,23 @@ export default function Footer({ openDashboard }: FooterProps) {
 
           <div>
             <h3 className="font-bold text-secondary-800 dark:text-white mb-4">{t('quickLinks')}</h3>
-            <ul className="space-y-2">
-              <li><a href="#about" className="hover:text-primary dark:hover:text-primary transition-colors">{t('about')}</a></li>
-              <li><a href="#school-life" className="hover:text-primary dark:hover:text-primary transition-colors">{t('schoolLife')}</a></li>
-              <li><a href="#programs" className="hover:text-primary dark:hover:text-primary transition-colors">{t('programs')}</a></li>
-              <li><a href="#testimonials" className="hover:text-primary dark:hover:text-primary transition-colors">{t('testimonials')}</a></li>
-              <li><a href="#faq" className="hover:text-primary dark:hover:text-primary transition-colors">{t('faq')}</a></li>
-              <li><a href="#contact" className="hover:text-primary dark:hover:text-primary transition-colors">{t('contact')}</a></li>
+            <ul className="space-y-2 text-secondary-600 dark:text-secondary-400">
+              <li><a href="#about" onClick={scrollTo} className="hover:text-primary dark:hover:text-primary transition-colors cursor-pointer">{t('about')}</a></li>
+              <li><a href="#school-life" onClick={scrollTo} className="hover:text-primary dark:hover:text-primary transition-colors cursor-pointer">{t('schoolLife')}</a></li>
+              <li><a href="#programs" onClick={scrollTo} className="hover:text-primary dark:hover:text-primary transition-colors cursor-pointer">{t('programs')}</a></li>
+              <li><a href="#faq" onClick={scrollTo} className="hover:text-primary dark:hover:text-primary transition-colors cursor-pointer">{t('faq')}</a></li>
+              <li><a href="#contact" onClick={scrollTo} className="hover:text-primary dark:hover:text-primary transition-colors cursor-pointer">{t('contact')}</a></li>
+              <li><a href="#map" onClick={scrollTo} className="hover:text-primary dark:hover:text-primary transition-colors cursor-pointer">{t('ourLocation')}</a></li>
             </ul>
           </div>
 
-          <div className="md:col-span-2 lg:col-span-2">
-            <h3 className="font-bold text-secondary-800 dark:text-white mb-4">Notre Emplacement</h3>
-             <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden border-2 border-primary/20">
-                <iframe
-                    src={schoolData.contact.mapUrl}
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    allowFullScreen={false}
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    className="grayscale-[50%] hover:grayscale-0 transition-all duration-300"
-                ></iframe>
-            </div>
+          <div>
+            <h3 className="font-bold text-secondary-800 dark:text-white mb-4">{t('contactUs')}</h3>
+            <address className="not-italic space-y-3 text-secondary-600 dark:text-secondary-400">
+                <p>{schoolData.contact.address}</p>
+                <p><a href={`tel:${schoolData.contact.phone.replace(/\s/g, '')}`} className="hover:text-primary">{schoolData.contact.phone}</a></p>
+                <p><a href={`mailto:${schoolData.contact.email}`} className="hover:text-primary">{schoolData.contact.email}</a></p>
+            </address>
           </div>
         </div>
 

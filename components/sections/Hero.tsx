@@ -1,7 +1,7 @@
-
 import React from 'react';
 import { useData } from '../../context/DataContext';
 import { useTranslations } from '../../hooks/useTranslations';
+import { useSmoothScroll } from '../../hooks/useSmoothScroll';
 import { HeroIllustration } from '../../assets/HeroIllustration';
 
 interface HeroProps {
@@ -11,6 +11,7 @@ interface HeroProps {
 export default function Hero({ openRegistration }: HeroProps) {
   const { schoolData } = useData();
   const t = useTranslations();
+  const scrollTo = useSmoothScroll();
 
   return (
     <section id="home" className="relative bg-secondary-50 dark:bg-secondary-900 overflow-hidden">
@@ -30,7 +31,11 @@ export default function Hero({ openRegistration }: HeroProps) {
               >
                 {t('registerNow')}
               </button>
-              <a href="#about" className="bg-white dark:bg-secondary-800 text-secondary-700 dark:text-secondary-200 font-bold py-3 px-8 rounded-full transition-transform transform hover:scale-105 shadow-lg border border-secondary-200 dark:border-secondary-700">
+              <a 
+                href="#about" 
+                onClick={scrollTo}
+                className="bg-white dark:bg-secondary-800 text-secondary-700 dark:text-secondary-200 font-bold py-3 px-8 rounded-full transition-transform transform hover:scale-105 shadow-lg border border-secondary-200 dark:border-secondary-700 cursor-pointer"
+              >
                 {t('about')}
               </a>
             </div>

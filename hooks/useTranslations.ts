@@ -55,6 +55,10 @@ const translations: Record<Language, Record<string, string>> = {
     confirmation: "Finalisation",
     confirmRegistration: "Veuillez vérifier les informations avant de soumettre.",
     submitRegistration: "Soumettre l'inscription",
+    mapTitle: 'Notre Emplacement',
+    mapSubtitle: 'Retrouvez-nous facilement. Nous sommes impatients de vous accueillir.',
+    ourLocation: 'Notre Emplacement',
+    close: 'Fermer',
   },
   en: {
     home: 'Home',
@@ -108,6 +112,10 @@ const translations: Record<Language, Record<string, string>> = {
     confirmation: "Finalization",
     confirmRegistration: "Please review the information before submitting.",
     submitRegistration: "Submit Registration",
+    mapTitle: 'Our Location',
+    mapSubtitle: 'Find us easily. We look forward to welcoming you.',
+    ourLocation: 'Our Location',
+    close: 'Close',
   },
   ar: {
     home: 'الرئيسية',
@@ -161,6 +169,10 @@ const translations: Record<Language, Record<string, string>> = {
     confirmation: "الإنهاء",
     confirmRegistration: "يرجى مراجعة المعلومات قبل الإرسال.",
     submitRegistration: "إرسال التسجيل",
+    mapTitle: 'موقعنا',
+    mapSubtitle: 'يمكنكم إيجادنا بسهولة. نتطلع للترحيب بكم.',
+    ourLocation: 'موقعنا',
+    close: 'إغلاق',
   },
 };
 

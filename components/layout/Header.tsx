@@ -3,14 +3,17 @@ import { useTheme } from '../../context/ThemeContext';
 import { useLanguage, Language } from '../../context/LanguageContext';
 import { useData } from '../../context/DataContext';
 import { useTranslations } from '../../hooks/useTranslations';
+import { useSmoothScroll } from '../../hooks/useSmoothScroll';
 import { SunIcon, MoonIcon, WorldIcon } from '../icons/Icons';
 import { Logo } from '../ui/Logo';
 
 interface HeaderProps {
     openRegistration: () => void;
+    closeRegistration: () => void;
+    isRegistrationVisible: boolean;
 }
 
-export default function Header({ openRegistration }: HeaderProps) {
+export default function Header({ openRegistration, closeRegistration, isRegistrationVisible }: HeaderProps) {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [isProgramsOpen, setProgramsOpen] = useState(false);
   const [isLangOpen, setLangOpen] = useState(false);
@@ -19,6 +22,13 @@ export default function Header({ openRegistration }: HeaderProps) {
   const { language, setLanguage } = useLanguage();
   const { schoolData } = useData();
   const t = useTranslations();
+  const scrollTo = useSmoothScroll();
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    scrollTo(e);
+    setMenuOpen(false);
+    setProgramsOpen(false);
+  };
 
   const navLinks = [
     { href: '#home', label: t('home') },
@@ -26,11 +36,12 @@ export default function Header({ openRegistration }: HeaderProps) {
     { 
       label: t('programs'), 
       subLinks: [
-        { href: '#programs-primary', label: t('primary') },
-        { href: '#programs-college', label: t('college') },
-        { href: '#programs-lycee', label: t('lycee') },
+        { href: '#programs', label: t('primary') },
+        { href: '#programs', label: t('college') },
+        { href: '#programs', label: t('lycee') },
       ]
     },
+    { href: '#school-life', label: t('schoolLife') },
     { href: '#testimonials', label: t('testimonials') },
     { href: '#contact', label: t('contact') },
   ];
@@ -44,32 +55,34 @@ export default function Header({ openRegistration }: HeaderProps) {
   return (
     <header className="bg-white/80 dark:bg-secondary-900/80 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
       <nav className="container mx-auto px-6 py-3 flex justify-between items-center">
-        <a href="#home" className="flex items-center space-x-2 rtl:space-x-reverse">
+        <a href="#home" onClick={handleNavClick} className="flex items-center space-x-2 rtl:space-x-reverse">
           <Logo url={schoolData.logoUrl} className="h-20 w-20 text-primary" />
           <span className="text-xl font-bold text-secondary-800 dark:text-white">{schoolData.schoolName}</span>
         </a>
 
         {/* Desktop Nav */}
-        <div className="hidden lg:flex items-center space-x-6">
-            {navLinks.map((link) => (
-                link.subLinks ? (
-                    <div key={link.label} className="relative" onMouseEnter={() => setProgramsOpen(true)} onMouseLeave={() => setProgramsOpen(false)}>
-                        <button className="font-medium text-secondary-600 dark:text-secondary-300 hover:text-primary dark:hover:text-primary transition-colors">
-                            {link.label}
-                        </button>
-                        {isProgramsOpen && (
-                            <div className="absolute top-full start-0 mt-2 w-48 bg-white dark:bg-secondary-800 rounded-md shadow-lg py-1">
-                                {link.subLinks.map(subLink => (
-                                    <a key={subLink.label} href={subLink.href} className="block px-4 py-2 text-sm text-secondary-700 dark:text-secondary-200 hover:bg-secondary-100 dark:hover:bg-secondary-700">{subLink.label}</a>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                ) : (
-                    <a key={link.label} href={link.href} className="font-medium text-secondary-600 dark:text-secondary-300 hover:text-primary dark:hover:text-primary transition-colors">{link.label}</a>
-                )
-            ))}
-        </div>
+        {!isRegistrationVisible && (
+            <div className="hidden lg:flex items-center space-x-6">
+                {navLinks.map((link) => (
+                    link.subLinks ? (
+                        <div key={link.label} className="relative" onMouseEnter={() => setProgramsOpen(true)} onMouseLeave={() => setProgramsOpen(false)}>
+                            <a href="#programs" onClick={handleNavClick} className="font-medium text-secondary-600 dark:text-secondary-300 hover:text-primary dark:hover:text-primary transition-colors cursor-pointer">
+                                {link.label}
+                            </a>
+                            {isProgramsOpen && (
+                                <div className="absolute top-full start-0 mt-2 w-48 bg-white dark:bg-secondary-800 rounded-md shadow-lg py-1">
+                                    {link.subLinks.map(subLink => (
+                                        <a key={subLink.label} href={subLink.href} onClick={handleNavClick} className="block px-4 py-2 text-sm text-secondary-700 dark:text-secondary-200 hover:bg-secondary-100 dark:hover:bg-secondary-700 cursor-pointer">{subLink.label}</a>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        <a key={link.label} href={link.href} onClick={handleNavClick} className="font-medium text-secondary-600 dark:text-secondary-300 hover:text-primary dark:hover:text-primary transition-colors cursor-pointer">{link.label}</a>
+                    )
+                ))}
+            </div>
+        )}
         
         <div className="flex items-center space-x-3 rtl:space-x-reverse">
           <div className="relative">
@@ -91,36 +104,48 @@ export default function Header({ openRegistration }: HeaderProps) {
             {theme === 'light' ? <MoonIcon className="w-6 h-6 text-secondary-600" /> : <SunIcon className="w-6 h-6 text-secondary-300" />}
           </button>
           
-          <button onClick={openRegistration} className="hidden sm:inline-block bg-primary hover:bg-primary-600 text-white font-bold py-2 px-4 rounded-full transition-colors">
-            {t('register')}
-          </button>
+          {isRegistrationVisible ? (
+             <button onClick={closeRegistration} className="hidden sm:inline-block bg-secondary-200 dark:bg-secondary-700 hover:bg-secondary-300 dark:hover:bg-secondary-600 text-secondary-800 dark:text-secondary-200 font-bold py-2 px-4 rounded-full transition-colors">
+                {t('close')}
+             </button>
+          ) : (
+            <button onClick={openRegistration} className="hidden sm:inline-block bg-primary hover:bg-primary-600 text-white font-bold py-2 px-4 rounded-full transition-colors">
+              {t('register')}
+            </button>
+          )}
 
           {/* Mobile Menu Button */}
           <div className="lg:hidden">
-            <button onClick={() => setMenuOpen(!isMenuOpen)} className="text-secondary-600 dark:text-secondary-300 focus:outline-none">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16m-7 6h7"}></path>
-              </svg>
-            </button>
+            {isRegistrationVisible ? (
+                <button onClick={closeRegistration} className="text-secondary-600 dark:text-secondary-300 focus:outline-none">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            ) : (
+                <button onClick={() => setMenuOpen(!isMenuOpen)} className="text-secondary-600 dark:text-secondary-300 focus:outline-none">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16m-7 6h7"}></path>
+                </svg>
+                </button>
+            )}
           </div>
         </div>
       </nav>
 
       {/* Mobile Menu */}
-      {isMenuOpen && (
+      {!isRegistrationVisible && isMenuOpen && (
         <div className="lg:hidden px-6 pb-4 flex flex-col space-y-3">
             {navLinks.map((link) => (
                 link.subLinks ? (
                     <div key={link.label}>
-                        <span className="font-medium text-secondary-600 dark:text-secondary-300">{link.label}</span>
+                        <a href="#programs" onClick={handleNavClick} className="font-medium text-secondary-600 dark:text-secondary-300 cursor-pointer">{link.label}</a>
                         <div className="flex flex-col ms-4 mt-2 space-y-2">
                            {link.subLinks.map(subLink => (
-                                <a key={subLink.label} href={subLink.href} className="text-secondary-500 dark:text-secondary-400 hover:text-primary dark:hover:text-primary" onClick={() => setMenuOpen(false)}>{subLink.label}</a>
+                                <a key={subLink.label} href={subLink.href} onClick={handleNavClick} className="text-secondary-500 dark:text-secondary-400 hover:text-primary dark:hover:text-primary cursor-pointer">{subLink.label}</a>
                            ))}
                         </div>
                     </div>
                 ) : (
-                    <a key={link.label} href={link.href} className="font-medium text-secondary-600 dark:text-secondary-300 hover:text-primary dark:hover:text-primary" onClick={() => setMenuOpen(false)}>{link.label}</a>
+                    <a key={link.label} href={link.href} onClick={handleNavClick} className="font-medium text-secondary-600 dark:text-secondary-300 hover:text-primary dark:hover:text-primary cursor-pointer">{link.label}</a>
                 )
             ))}
             <button onClick={() => { openRegistration(); setMenuOpen(false); }} className="sm:hidden w-full bg-primary hover:bg-primary-600 text-white font-bold py-2 px-4 rounded-full transition-colors">
